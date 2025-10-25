@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vet Study Hub 🐾</title>
+    <style>
+        /* Cute, adorable, and educational styling */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #e0f7fa, #fce4ec);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(45deg, #81c784, #ffb74d);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0 0 20px 20px;
+        }
+        header h1 { margin: 0; font-size: 2.5em; cursor: pointer; } /* Logo is clickable */
+        header h1 a { color: white; text-decoration: none; }
+        nav { margin-top: 10px; }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            transition: background 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+        nav a:hover { background: rgba(255,255,255,0.5); transform: scale(1.05); }
+        main { max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .page { display: none; } /* Hide all pages by default */
+        .page.active { display: block; } /* Show active page */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .card h2 { color: #4caf50; border-bottom: 2px solid #ffb74d; padding-bottom: 10px; }
+        .card img { max-width: 100%; border-radius: 15px; margin: 10px 0; }
+        ul { list-style-type: none; padding: 0; }
+        ul li { background: #f9f9f9; margin: 5px 0; padding: 10px; border-radius: 10px; }
+        .edit-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 20px 0;
+            transition: background 0.3s;
+        }
+        .edit-btn:hover { background: #e68900; }
+        .quiz { background: #e8f5e8; padding: 15px; border-radius: 15px; margin: 20px 0; }
+        .quiz button { margin: 5px; background: #4caf50; color: white; border: none; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+        .quiz button:hover { background: #388e3c; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 15% auto; padding: 20px; border-radius: 20px; width: 80%; max-width: 500px; }
+        .close { float: right; font-size: 28px; cursor: pointer; }
+        footer { text-align: center; padding: 20px; background: #81c784; color: white; border-radius: 20px 20px 0 0; margin-top: 20px; }
+        @media (max-width: 768px) { nav a { display: block; margin: 5px 0; } .card { padding: 15px; } }
+        /* Cute animations */
+        .bounce { animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+    </style>
+    <script>
+        // Quiz function
+        function checkQuiz(subject, answer) {
+            const correct = {
+                histology: 'epithelial',
+                physiology: 'homeostasis',
+                pharmacology: 'pharmacokinetics',
+                pathology: 'inflammation',
+                nutrition: 'macronutrients',
+                biochemistry: 'enzymes',
+                biophysics: 'biomechanics',
+                'animal-behavior': 'ethology',
+                'veterinary-anatomy': 'comparative'
+            };
+            alert(answer === correct[subject] ? 'Yay! Correct! 🐾 Keep studying!' : 'Oops, try again! 📚 You got this!');
+        }
+        // Modal functions
+        function openModal(subject = '') {
+            document.getElementById('editModal').style.display = 'block';
+            if (subject) document.getElementById('subject').value = subject;
+        }
+        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
+        // Page navigation (simulates redirects)
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+        // Add new subject/page dynamically
+        function addNewSubject() {
+            const newSubject = document.getElementById('newSubject').value.trim();
+            if (!newSubject) return alert('Please enter a subject name! 🐾');
+            const subjectId = newSubject.toLowerCase().replace(/\s+/g, '-');
+            if (document.getElementById(subjectId)) return alert('Subject already exists! 📚');
+            
+            // Add to nav
+            const nav = document.querySelector('nav');
+            const newNavLink = document.createElement('a');
+            newNavLink.textContent = newSubject;
+            newNavLink.onclick = () => showPage(subjectId);
+            nav.appendChild(newNavLink);
+            
+            // Add to home preview
+            const homeList = document.querySelector('#home ul');
+            const newLi = document.createElement('li');
+            newLi.innerHTML = `<strong>${newSubject}:</strong> Explore this new topic! 🐾 <a onclick="showPage('${subjectId}')">Learn More</a>`;
+            homeList.appendChild(newLi);
+            
+            // Create new page
+            const main = document.querySelector('main');
+            const newPage = document.createElement('div');
+            newPage.id = subjectId;
+            newPage.className = 'page';
+            newPage.innerHTML = `
+                <div class="card">
+                    <h2>What is ${newSubject}?</h2>
+                    <p>This is a new subject! Add details below. 🧠</p>
+                    <img src="https://via.placeholder.com/400x200?text=${newSubject}+Diagram" alt="Placeholder for ${newSubject}">
+                </div>
+                <button class="edit-btn" onclick="openModal('${subjectId}')">Edit This Page 🖊️</button>
+                <div id="dynamic-${subjectId}"></div>
+            `;
+            main.appendChild(newPage);
+            
+            document.getElementById('newSubject').value = '';
+            alert('New subject added! 🐶');
+        }
+        // Simulate editing
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home'); // Start with home
+            const form = document.getElementById('editForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const subject = document.getElementById('subject').value;
+                    const content = document.getElementById('content').value;
+                    const image = document.getElementById('image').files[0];
+                    localStorage.setItem(`${subject}-content`, content);
+                    if (image) localStorage.setItem(`${subject}-image`, URL.createObjectURL(image));
+                    alert('Content saved! Refresh to see your edits. 🖊️');
+                    closeModal();
+                });
+            }
+            // Load saved edits for all pages
+            const subjects = ['global', 'histology', 'physiology', 'pharmacology', 'pathology', 'nutrition', 'biochemistry', 'biophysics', 'animal-behavior', 'veterinary-anatomy'];
+            subjects.forEach(sub => {
+                const savedContent = localStorage.getItem(`${sub}-content`);
+                const savedImage = localStorage.getItem(`${sub}-image`);
+                const dynamicDiv = document.getElementById(`dynamic-${sub}`);
+                if (dynamicDiv) {
+                    if (savedContent) dynamicDiv.innerHTML += `<div class="card"><h3>User Edit:</h3><p>${savedContent}</p></div>`;
+                    if (savedImage) dynamicDiv.innerHTML += `<img src="${savedImage}" alt="User uploaded image" width="200" style="border-radius:15px;">`;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1><a onclick="showPage('home')">Vet Study Hub 🐾</a> <span class="bounce">🐶</span></h1>
+        <p>Your adorable, educational adventure into veterinary wonders! Study hard, save lives! 🌟</p>
+        <nav>
+            <a onclick="showPage('home')">Home</a>
+            <a onclick="showPage('histology')">Histology</a>
+            <a onclick="showPage('physiology')">Physiology</a>
+            <a onclick="showPage('pharmacology')">Pharmacology</a>
+            <a onclick="showPage('pathology')">Pathology</a>
+            <a onclick="showPage('nutrition')">Nutrition</a>
+            <a onclick="showPage('biochemistry')">Biochemistry</a>
+            <a onclick="showPage('biophysics')">Biophysics</a>
+            <a onclick="showPage('animal-behavior')">Animal Behavior</a>
+            <a onclick="showPage('veterinary-anatomy')">Veterinary Anatomy</a>
+        </nav>
+    </header>
+    <main>
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="card">
+                <h2>Welcome, Future Vet! 🐱</h2>
+                <p>Dive into the magical world of veterinary science. Each subject is packed with fun facts, diagrams, and tips to help you ace your studies. Click on a subject to explore! Remember, every animal deserves a hero like you. 💖</p>
+                <img src="https://via.placeholder.com/400x200?text=Happy+Vet+with+Animals" alt="Cute illustration of a vet with pets">
+                <button class="edit-btn" onclick="openModal('global')">Edit Hub (Add Global Info) 🖊️</button>
+            </div>
+            <div class="card">
+                <h2>Quick Subject Previews</h2>
+                <ul>
+                    <li><strong>Histology:</strong> Peek into tiny tissues! 🧬 <a onclick="showPage('histology')">Learn More</a></li>
+                    <li><strong>Physiology:</strong> How bodies work like magic! 🫀 <a onclick="showPage('physiology')">Learn More</a></li>
+                    <li><strong>Pharmacology:</strong> Drug heroes for animals! 💊 <a onclick="showPage('pharmacology')">Learn More</a></li>
+                    <li><strong>Pathology:</strong> Disease detectives! 🔬 <a onclick="showPage('pathology')">Learn More</a></li>
+                    <li><strong>Nutrition:</strong> Yummy diets for health! 🍎 <a onclick="showPage('nutrition')">Learn More</a></li>
+                    <li><strong>Biochemistry:</strong> Life's chemical dance! 🧫 <a onclick="showPage('biochemistry')">Learn More</a></li>
+                    <li><strong>Biophysics:</strong> Physics in furry action! ⚡ <a onclick="showPage('biophysics')">Learn More</a></li>
+                    <li><strong>Animal Behavior:</strong> Decoding animal fun! 🐾 <a onclick="showPage('animal-behavior')">Learn More</a></li>
+                    <li><strong>Veterinary Anatomy:</strong> Body blueprints! 🦴 <a onclick="showPage('veterinary-anatomy')">Learn More</a></li>
+                </ul>
+            </div>
+            <div id="dynamic-global"></div>
+        </div>
+
+        <!-- Histology Page -->
+        <div id="histology" class="page">
+            <div class="card">
+                <h2>What is Histology?</h2>
+                <p>Histology is the study of tissues at the microscopic level, revealing how animal bodies are constructed from cells. It's like being a tiny explorer in a cellular jungle! Essential for diagnosing diseases in vets by examining biopsies. 📖</p>
+                <img src="https://via.placeholder.com/400x200?text=Histology+Microscope" alt="Cute microscope with tissue slides">
+            </div>
+            <div class="card">
+                <h2>Key Concepts</h2>
+                <ul>
+                    <li><strong>Epithelial Tissues:</strong> Protective layers like skin. Types: simple, stratified. Helps with wound healing and barriers.</li>
+                    <li><strong>Connective Tissues:</strong> Bone, cartilage, blood. Provides structure—think of it as the body's scaffolding for support.</li>
+                    <li><strong>Muscular Tissues:</strong> Skeletal (voluntary), cardiac (heart), smooth (organs). Powers movement and pumps blood.</li>
+                    <li><strong>Nervous Tissues:</strong> Neurons for signals. Crucial for reflexes and brain function in animals.</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>Educational Resources</h2>
+                <p>Recommended: "Veterinary Histology" by Dellmann. Online: Khan Academy vet modules. Practice with virtual slides on sites like Histology World!</p>
+            </div>
+            <div class="quiz">
+                <h3>Quick Quiz! 🧠</h3>
+                <p>What tissue covers and protects the body?</p>
+                <button onclick="checkQuiz('histology', 'epithelial')">Epithelial</button>
+                <button onclick="checkQuiz('histology', 'connective')">Connective</button>
+            </div>
+            <button class="edit-btn" onclick="openModal('histology')">Edit This Page 🖊️</button>
+            <div id="dynamic-histology"></div>
+        </div>
+
+        <!-- Physiology Page -->
+        <div id="physiology" class="page">
+            <div class="card">
+                <h2>What is Physiology?</h2>
+                <p>Physiology explores how organs and systems function to keep animals healthy. It's the "why" behind the "how" of life! Focuses on homeostasis and adaptations. 🌟</p>
+                <img src="https://via.placeholder.com/400x200?text=Heart+and+Lungs+Diagram" alt="Adorable illustration of a heart and lungs with animal faces">
+            </div>
+            <div class="card">
+                <h2>Key Concepts</h2>
+                <ul>
+                    <li><strong>Cardiovascular System:</strong> Heart and blood vessels—pumps life like a cheerful drumbeat.</li>
+                    <li><strong>Respiratory System:</strong> Lungs and airways for breathing. Essential for those deep doggy sighs.</li>
+                    <li><strong>Endocrine System:</strong> Hormones regulating growth and metabolism. The body's tiny conductors.</li>
+                    <li><strong>Homeostasis:</strong> Maintaining balance, like keeping a cat's purr at the perfect temperature
